@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 <head>
     <meta charset="utf-8" />
     <title>人體骨骼 AR 智慧辨識系統</title>
@@ -8,7 +8,6 @@
     <style>
         body { margin: 0; overflow: hidden; font-family: sans-serif; }
         
-        /* 懸浮文字框：設定足夠的寬度與可捲動性，確保長文本完美顯示 */
         #description-panel {
             display: none;
             position: fixed;
@@ -19,12 +18,12 @@
             max-width: 650px;
             max-height: 35vh;
             overflow-y: auto;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 20px 25px;
             border-radius: 12px;
             z-index: 1000;
-            pointer-events: auto; /* 允許使用者捲動閱讀長條文本 */
+            pointer-events: auto;
             border: 2px solid #0ea5e9;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
@@ -47,18 +46,18 @@
         device-orientation-permission-ui="enabled: false"
     >
         <a-assets>
-            <img id="img1" src="bone1.png" />
-            <img id="img2" src="bone2.png" />
-            <img id="img3" src="bone3.png" />
-            <img id="img4" src="bone4.png" />
-            <img id="img5" src="bone5.png" />
-            <img id="img6" src="bone6.png" />
-            <img id="img7" src="bone7.png" />
-            <img id="img8" src="bone8.png" />
-            <img id="img9" src="bone9.png" />
+            <img id="img1" src="bone1.jpg" />
+            <img id="img2" src="bone2.jpg" />
+            <img id="img3" src="bone3.jpg" />
+            <img id="img4" src="bone4.jpg" />
+            <img id="img5" src="bone5.jpg" />
+            <img id="img6" src="bone6.jpg" />
+            <img id="img7" src="bone7.jpg" />
+            <img id="img8" src="bone8.jpg" />
+            <img id="img9" src="bone9.jpg" />
         </a-assets>
 
-        <a-light type="ambient" intensity="1.5"></a-light>
+        <a-light type="ambient" intensity="3.0"></a-light>
         <a-camera look-controls="enabled: false"></a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0" class="bone-target" data-index="0">
@@ -68,7 +67,8 @@
             <a-plane src="#img2" width="1.2" height="0.8" touch-transform></a-plane>
         </a-entity>
         <a-entity mindar-image-target="targetIndex: 2" class="bone-target" data-index="2">
-            <a-plane src="#img3" width="1.2" height="0.8" touch-transform></a-entity>
+            <a-plane src="#img3" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
         <a-entity mindar-image-target="targetIndex: 3" class="bone-target" data-index="3">
             <a-plane src="#img4" width="1.2" height="0.8" touch-transform></a-plane>
         </a-entity>
@@ -90,7 +90,6 @@
     </a-scene>
 
     <script>
-        // 1. 完整保留、毫無刪減的原始骨骼文字資料庫
         const boneData = [
             {
                 title: "頭骨 (Head)",
@@ -130,7 +129,6 @@
             }
         ];
 
-        // 2. A-Frame 觸控控制組件（縮放、旋轉、雙擊重設）
         AFRAME.registerComponent('touch-transform', {
             init: function () {
                 const el = this.el;
@@ -140,7 +138,6 @@
                 this.prevAngle = null;
                 this.lastTap = 0;
 
-                // 雙擊歸位
                 el.addEventListener('click', () => {
                     const now = Date.now();
                     if (now - this.lastTap < 300) {
@@ -169,13 +166,11 @@
                         const dist = Math.hypot(dx, dy);
                         const angle = Math.atan2(dy, dx);
 
-                        // 縮放限制在 0.5 到 4 倍
                         const scaleFactor = dist / this.prevDistance;
                         this.currentScale *= scaleFactor;
                         this.currentScale = Math.min(Math.max(this.currentScale, 0.5), 4);
                         el.object3D.scale.set(this.currentScale, this.currentScale, this.currentScale);
 
-                        // 繞 Z 軸旋轉
                         const deltaAngle = angle - this.prevAngle;
                         el.object3D.rotation.z += deltaAngle;
 
@@ -192,7 +187,6 @@
             }
         });
 
-        // 3. 掃描事件監聽：對齊對應索引並動態替換完整文本
         window.addEventListener("load", () => {
             const panel = document.querySelector("#description-panel");
             const titleEl = document.querySelector("#bone-title");
@@ -206,6 +200,7 @@
                     titleEl.innerText = boneData[index].title;
                     descEl.innerText = boneData[index].desc;
                     panel.style.display = "block";
+                    console.log(`成功識別骨骼目標，索引值: ${index}`);
                 });
 
                 target.addEventListener("targetLost", () => {
