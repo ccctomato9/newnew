@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>人體骨骼 AR 智慧辨識系統</title>
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; }
+        
+        /* 懸浮文字框：設定足夠的寬度與可捲動性，確保長文本完美顯示 */
+        #description-panel {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 650px;
+            max-height: 35vh;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            z-index: 1000;
+            pointer-events: auto; /* 允許使用者捲動閱讀長條文本 */
+            border: 2px solid #0ea5e9;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        #description-panel h2 { margin: 0 0 12px 0; color: #0ea5e9; font-size: 1.4em; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+        #description-panel p { margin: 0; line-height: 1.6; font-size: 0.95em; white-space: pre-line; }
+    </style>
+</head>
+<body>
+
+    <div id="description-panel">
+        <h2 id="bone-title">骨骼名稱</h2>
+        <p id="bone-desc">描述內容載入中...</p>
+    </div>
+
+    <a-scene
+        mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiScanning: yes;"
+        color-space="sRGB"
+        renderer="colorManagement: true; physicallyCorrectLights: true"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+    >
+        <a-assets>
+            <img id="img1" src="bone1.png" />
+            <img id="img2" src="bone2.png" />
+            <img id="img3" src="bone3.png" />
+            <img id="img4" src="bone4.png" />
+            <img id="img5" src="bone5.png" />
+            <img id="img6" src="bone6.png" />
+            <img id="img7" src="bone7.png" />
+            <img id="img8" src="bone8.png" />
+            <img id="img9" src="bone9.png" />
+        </a-assets>
+
+        <a-light type="ambient" intensity="1.5"></a-light>
+        <a-camera look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0" class="bone-target" data-index="0">
+            <a-plane src="#img1" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 1" class="bone-target" data-index="1">
+            <a-plane src="#img2" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 2" class="bone-target" data-index="2">
+            <a-plane src="#img3" width="1.2" height="0.8" touch-transform></a-entity>
+        <a-entity mindar-image-target="targetIndex: 3" class="bone-target" data-index="3">
+            <a-plane src="#img4" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 4" class="bone-target" data-index="4">
+            <a-plane src="#img5" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 5" class="bone-target" data-index="5">
+            <a-plane src="#img6" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 6" class="bone-target" data-index="6">
+            <a-plane src="#img7" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 7" class="bone-target" data-index="7">
+            <a-plane src="#img8" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 8" class="bone-target" data-index="8">
+            <a-plane src="#img9" width="1.2" height="0.8" touch-transform></a-plane>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        // 1. 完整保留、毫無刪減的原始骨骼文字資料庫
+        const boneData = [
+            {
+                title: "頭骨 (Head)",
+                desc: "人類頭骨通常由22塊骨頭組成。除了下頜骨，骨頭間是由骨縫連接，只允許微量的運動。\n8塊骨頭組成腦顱，容納並保護整個腦部，包括大腦和腦幹（即中腦、小腦，腦橋和延髓）；14塊骨頭組成面顱，支撐面部並形成面部輪廓；顳骨包住中耳的6塊聽小骨。"
+            },
+            {
+                title: "肩胛骨 (Shoulder)",
+                desc: "肩胛骨（scapula）位於胸廓背部，是組成胸帶的三塊骨骼之一，在第2至第7肋骨的高度，為一大的三角形扁平骨。動物的肩胛骨也叫扇骨。\n他們的內側緣離脊柱約5公分。"
+            },
+            {
+                title: "肱骨 (Arm)",
+                desc: "肱骨（humerus）是肩到肘的長骨，是上臂的一部分。它將肩胛骨和前臂的橈骨和尺骨連接起來。肱骨由三部分組成。肱骨上端包括一個球型部分、一個較窄的頸部及兩個小突起，分別稱為大結節、小結節。肱骨幹上半部為圓柱形，下半部則較似稜柱。肱骨下端包含兩個上髁、兩個突起（肱骨滑車和肱骨小頭）及三個窩（冠狀窩、橈骨窩和鷹嘴窩）。"
+            },
+            {
+                title: "椎骨 (Spine)",
+                desc: "椎骨（英語：vertebra）又稱脊椎骨、脊椎，是組成脊椎動物脊柱的不規則骨，屬於構成中軸骨核心的主要骨骼系統結構構件，成年後可作為主要的造血組織。典型椎骨包括椎體、椎弓、棘突和橫突、關節突等部分。\n依動物種類不同，椎骨可為硬骨或軟骨。哺乳動物則根據椎骨所在部位不同分為頸椎、胸椎、腰椎、薦椎、尾椎等。"
+            },
+            {
+                title: "胸骨 & 肋骨 (Ribs)",
+                desc: "胸骨（Sternum）是胸廓前方一塊長形扁平，領帶狀骨，接有肋 。\n肋骨（英語：rib）是胸廓中的枝狀骨，呈細長呈弓形的扁骨，在背部與相應的胸椎相連，由後上方向前下方傾斜，在人體有12對。動物的頭側肋骨藉由肋軟骨與胸骨相連，尾側肋骨一般不與胸骨相連。肋則包括肋骨（ribs）和肋軟骨（costal cartilages）。"
+            },
+            {
+                title: "掌骨 & 指骨 (Hand)",
+                desc: "掌骨是手部骨骼中間的部份，連接在近端手指及腕骨之間，而腕骨再與前臂連結。\n指骨（英語：phalanges of fingers）共14塊，均為長骨。拇指僅有兩節指骨；第二至五指各有三節指骨。各指的指骨由近側至遠側依次叫近節指骨、中節指骨、遠節指骨。其中拇指無中節指骨。每節指骨的近側端叫做指骨底。近節指骨與中節指骨的遠側端呈滑輪狀，叫做指骨滑車。遠節指骨遠側端的掌面膨大粗糙，叫做遠節指骨粗隆。"
+            },
+            {
+                title: "髖骨 (Hip)",
+                desc: "髖骨（hip bone）又稱胯骨、髀骨，為人體腰部至臀部的大型骨骼，共左右兩塊。\n幼年時，髖骨分為髂骨、坐骨和恥骨以及軟骨連接。成年後，它們之間的軟骨會骨化，成為一個整體，即髖骨。左髖骨、右髖骨、骶骨、尾骨以及它們之間的骨連接一起構成骨盆。髖骨與股骨構成髖關節。"
+            },
+            {
+                title: "股骨 (Leg)",
+                desc: "股骨（femur）俗稱大腿骨（thigh bone），是人體中最長、最大的管狀骨，位於大腿，分為一體及上、下兩端。在四肢動物，位於下肢（或後肢）深面。\n股骨上端彎曲，此彎曲部稱作股骨頸（femoral neck）。這種彎曲連接能有效降低外界對骨盆的衝擊，股骨頸有如一緩衝器。股骨頸上方有股骨頭（femoral head），近圓形，其關節面與骨盆的髖臼形成髖關節。"
+            },
+            {
+                title: "足部骨骼 (Foot)",
+                desc: "跗骨（英語：Tarsus）指的是四足類動物足部七塊骨骼組成的短骨群，位於脛骨、腓骨、蹠骨之間。它由中足（骰骨、三個楔骨、足舟骨）和後足（距骨和跟骨）組成。\n跗骨與蹠骨形成關節，而蹠骨又與近端趾骨形成關節。在脛骨與腓骨之下和跗骨之上的關節稱為踝關節本體。人類最大的跗骨是跟骨，是位於足跟的負重骨骼。\n蹠骨（英語：Metatarsal bones、Metatarsus）為足部的一個長骨群，共有五塊，位於中後足的跗骨與腳趾的趾骨之間，蹠骨沒有個別命名，而是從內側（大姆趾側）到外側以數字依次命名為第一蹠骨、第二蹠骨、第三蹠骨、第四蹠骨、第五蹠骨。足部的蹠骨類似於手的掌骨。人類蹠骨長度按降序排列為：第二、第三、第四、第五、第一蹠骨。\n趾骨（英語：Phalanx，複數：Phalanges）或指骨，是大多數脊椎動物指頭處的骨骼。在靈長類動物身上，拇指（拇趾）通常有兩節趾骨，而其餘指頭（趾頭）則有三節。趾骨被歸類為長骨。"
+            }
+        ];
+
+        // 2. A-Frame 觸控控制組件（縮放、旋轉、雙擊重設）
+        AFRAME.registerComponent('touch-transform', {
+            init: function () {
+                const el = this.el;
+                this.defaultScale = el.object3D.scale.x;
+                this.currentScale = this.defaultScale;
+                this.prevDistance = null;
+                this.prevAngle = null;
+                this.lastTap = 0;
+
+                // 雙擊歸位
+                el.addEventListener('click', () => {
+                    const now = Date.now();
+                    if (now - this.lastTap < 300) {
+                        el.object3D.scale.set(this.defaultScale, this.defaultScale, this.defaultScale);
+                        el.object3D.rotation.set(0, 0, 0);
+                        this.currentScale = this.defaultScale;
+                    }
+                    this.lastTap = now;
+                });
+
+                const canvas = el.sceneEl.canvas;
+                
+                canvas.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 2) {
+                        const dx = e.touches[0].clientX - e.touches[1].clientX;
+                        const dy = e.touches[0].clientY - e.touches[1].clientY;
+                        this.prevDistance = Math.hypot(dx, dy);
+                        this.prevAngle = Math.atan2(dy, dx);
+                    }
+                });
+
+                canvas.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 2 && this.prevDistance !== null) {
+                        const dx = e.touches[0].clientX - e.touches[1].clientX;
+                        const dy = e.touches[0].clientY - e.touches[1].clientY;
+                        const dist = Math.hypot(dx, dy);
+                        const angle = Math.atan2(dy, dx);
+
+                        // 縮放限制在 0.5 到 4 倍
+                        const scaleFactor = dist / this.prevDistance;
+                        this.currentScale *= scaleFactor;
+                        this.currentScale = Math.min(Math.max(this.currentScale, 0.5), 4);
+                        el.object3D.scale.set(this.currentScale, this.currentScale, this.currentScale);
+
+                        // 繞 Z 軸旋轉
+                        const deltaAngle = angle - this.prevAngle;
+                        el.object3D.rotation.z += deltaAngle;
+
+                        this.prevDistance = dist;
+                        this.prevAngle = angle;
+                        e.preventDefault();
+                    }
+                });
+
+                canvas.addEventListener('touchend', () => {
+                    this.prevDistance = null;
+                    this.prevAngle = null;
+                });
+            }
+        });
+
+        // 3. 掃描事件監聽：對齊對應索引並動態替換完整文本
+        window.addEventListener("load", () => {
+            const panel = document.querySelector("#description-panel");
+            const titleEl = document.querySelector("#bone-title");
+            const descEl = document.querySelector("#bone-desc");
+            const targets = document.querySelectorAll(".bone-target");
+
+            targets.forEach(target => {
+                const index = target.getAttribute("data-index");
+                
+                target.addEventListener("targetFound", () => {
+                    titleEl.innerText = boneData[index].title;
+                    descEl.innerText = boneData[index].desc;
+                    panel.style.display = "block";
+                });
+
+                target.addEventListener("targetLost", () => {
+                    panel.style.display = "none";
+                });
+            });
+        });
+    </script>
+</body>
+</html>
